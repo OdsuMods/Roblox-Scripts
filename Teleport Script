@@ -1,15 +1,37 @@
-local x = 0
-local y = 0
-local z = 0
+-- Teleport Script (Loadstring Ready)
+-- Usage:
+-- Position.X: 0
+-- Position.Y: 50
+-- Position.Z: 0
+-- loadstring(game:HttpGet("https://raw.githubusercontent.com/OdsuMods/Roblox-Scripts/refs/heads/main/Teleport%20Script"))()
 
-loadstring([[
-    local Players = game:GetService("Players")
-    local player = Players.LocalPlayer
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Default position (you can change these values)
+local targetPosition = Vector3.new(0, 50, 0)
+
+-- Read custom position from comments (Position.X: Y: Z:)
+local scriptSource = getfenv(0).script.Source or ""
+
+for line in scriptSource:gmatch("[^\r\n]+") do
+    local x = line:match("Position%.X:%s*(%-?%d+%.?%d*)")
+    local y = line:match("Position%.Y:%s*(%-?%d+%.?%d*)")
+    local z = line:match("Position%.Z:%s*(%-?%d+%.?%d*)")
     
-    local target = Vector3.new(]]..x..[[, ]]..y..[[, ]]..z..[[)
-    
-    local char = player.Character or player.CharacterAdded:Wait()
-    local root = char:WaitForChild("HumanoidRootPart")
-    
-    root.CFrame = CFrame.new(target)
-]])()
+    if x and y and z then
+        targetPosition = Vector3.new(tonumber(x), tonumber(y), tonumber(z))
+        break
+    end
+end
+
+-- Teleport the player
+local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Optional: Small delay to ensure character is fully loaded
+task.wait(0.2)
+
+humanoidRootPart.CFrame = CFrame.new(targetPosition)
+
+print("Teleported to:", targetPosition)
