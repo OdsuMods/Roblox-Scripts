@@ -1,9 +1,15 @@
+local x = 0
+local y = 0
+local z = 0
+
+loadstring([[
     local Players = game:GetService("Players")
     local player = Players.LocalPlayer
     
-    local targetPos = Vector3.new(]] .. x .. [[, ]] .. y .. [[, ]] .. z .. [[)
+    local target = Vector3.new(]]..x..[[, ]]..y..[[, ]]..z..[[)
     
-    local character = player.Character or player.CharacterAdded:Wait()
-    local root = character:WaitForChild("HumanoidRootPart")
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:WaitForChild("HumanoidRootPart")
     
-    root.CFrame = CFrame.new(targetPos)
+    root.CFrame = CFrame.new(target)
+]])()
