@@ -1,6 +1,4 @@
 if not getgenv().TeleportPos then
-    warn("Teleport Script: No position set. Please set getgenv().TeleportPos first.")
-    warn("Example: getgenv().TeleportPos = Vector3.new(100, 50, -200)")
     return
 end
 if typeof(getgenv().TeleportPos) ~= "Vector3" then
