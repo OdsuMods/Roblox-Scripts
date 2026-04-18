@@ -1,42 +1,23 @@
--- Roblox Teleport Script (Loadstring Ready)
--- Put your coordinates like this:
--- Position.X: 100
--- Position.Y: 50
--- Position.Z: 200
--- Then run the loadstring below
+-- Roblox Teleport Script by OdsuMods
+-- Teleports LocalPlayer to a world position
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- Default position
-local targetPos = Vector3.new(0, 50, 0)
+-- Get coordinates from global variables (set before loadstring)
+local targetX = getgenv().TeleportX or 0
+local targetY = getgenv().TeleportY or 5
+local targetZ = getgenv().TeleportZ or 0
 
--- Safely read the position from the script source
-pcall(function()
-    local source = getfenv(0).script.Source or ""
-    
-    local x = source:match("Position%.X:%s*(%-?%d+%.?%d*)")
-    local y = source:match("Position%.Y:%s*(%-?%d+%.?%d*)")
-    local z = source:match("Position%.Z:%s*(%-?%d+%.?%d*)")
-    
-    if x and y and z then
-        targetPos = Vector3.new(tonumber(x), tonumber(y), tonumber(z))
-        print("✅ Custom position loaded:", targetPos)
-    end
-end)
+-- Wait for character
+if not LocalPlayer.Character then
+    LocalPlayer.CharacterAdded:Wait()
+end
 
--- Teleport the player
 local character = LocalPlayer.Character
-if not character then
-    character = LocalPlayer.CharacterAdded:Wait()
-end
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
-local root = character:WaitForChild("HumanoidRootPart", 5)
-if root then
-    -- Small delay + slight upward offset to prevent falling through floor
-    task.wait(0.3)
-    root.CFrame = CFrame.new(targetPos + Vector3.new(0, 4, 0))
-    print("✅ Teleported to:", targetPos)
-else
-    warn("❌ Could not find HumanoidRootPart")
-end
+-- Teleport
+humanoidRootPart.CFrame = CFrame.new(targetX, targetY, targetZ)
+
+print("Teleported to: (" .. targetX .. ", " .. targetY .. ", " .. targetZ .. ")")
