@@ -1,37 +1,42 @@
--- Teleport Script (Loadstring Ready)
--- Usage:
--- Position.X: 0
+-- Roblox Teleport Script (Loadstring Ready)
+-- Put your coordinates like this:
+-- Position.X: 100
 -- Position.Y: 50
--- Position.Z: 0
--- loadstring(game:HttpGet("https://raw.githubusercontent.com/OdsuMods/Roblox-Scripts/refs/heads/main/Teleport%20Script"))()
+-- Position.Z: 200
+-- Then run the loadstring below
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- Default position (you can change these values)
-local targetPosition = Vector3.new(0, 50, 0)
+-- Default position
+local targetPos = Vector3.new(0, 50, 0)
 
--- Read custom position from comments (Position.X: Y: Z:)
-local scriptSource = getfenv(0).script.Source or ""
-
-for line in scriptSource:gmatch("[^\r\n]+") do
-    local x = line:match("Position%.X:%s*(%-?%d+%.?%d*)")
-    local y = line:match("Position%.Y:%s*(%-?%d+%.?%d*)")
-    local z = line:match("Position%.Z:%s*(%-?%d+%.?%d*)")
+-- Safely read the position from the script source
+pcall(function()
+    local source = getfenv(0).script.Source or ""
+    
+    local x = source:match("Position%.X:%s*(%-?%d+%.?%d*)")
+    local y = source:match("Position%.Y:%s*(%-?%d+%.?%d*)")
+    local z = source:match("Position%.Z:%s*(%-?%d+%.?%d*)")
     
     if x and y and z then
-        targetPosition = Vector3.new(tonumber(x), tonumber(y), tonumber(z))
-        break
+        targetPos = Vector3.new(tonumber(x), tonumber(y), tonumber(z))
+        print("✅ Custom position loaded:", targetPos)
     end
-end
+end)
 
 -- Teleport the player
-local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local character = LocalPlayer.Character
+if not character then
+    character = LocalPlayer.CharacterAdded:Wait()
+end
 
--- Optional: Small delay to ensure character is fully loaded
-task.wait(0.2)
-
-humanoidRootPart.CFrame = CFrame.new(targetPosition)
-
-print("Teleported to:", targetPosition)
+local root = character:WaitForChild("HumanoidRootPart", 5)
+if root then
+    -- Small delay + slight upward offset to prevent falling through floor
+    task.wait(0.3)
+    root.CFrame = CFrame.new(targetPos + Vector3.new(0, 4, 0))
+    print("✅ Teleported to:", targetPos)
+else
+    warn("❌ Could not find HumanoidRootPart")
+end
