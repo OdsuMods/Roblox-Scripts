@@ -19,5 +19,3 @@ local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
 -- Teleport
 humanoidRootPart.CFrame = CFrame.new(targetX, targetY, targetZ)
-
-print("Teleported to: (" .. targetX .. ", " .. targetY .. ", " .. targetZ .. ")")
